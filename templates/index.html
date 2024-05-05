@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Evaluation</title>
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Resume Evaluation</h1>
+        <form id="evaluationForm" enctype="multipart/form-data">
+            <label for="resume">Upload your resume:</label>
+            <input type="file" id="resume" name="resume" accept=".pdf" required><br><br>
+            
+            <label for="job_role">Select job role:</label>
+            <select id="job_role" name="job_role">
+                <option value="none">--None--</option>
+                <option value="Software Engineer">Software Engineer</option>
+                <option value="Data Scientist">Data Scientist</option>
+                <option value="Frontend Developer">Frontend Developer</option>
+                <option value="Backend Developer">Backend Developer</option>
+                <option value="UI/UX Designer">UI/UX Designer</option>
+                <option value="Project Manager">Project Manager</option>
+                <option value="Marketing Specialist">Marketing Specialist</option>
+                <option value="Financial Analyst">Financial Analyst</option>
+                <option value="Human Resources Manager">Human Resources Manager</option>
+                <option value="Content Writer">Content Writer</option>
+                <option value="Content Writer">Content Writer</option>
+                <option value="Network Engineer">Network Engineer</option>
+                <option value="DevOps Engineer">DevOps Engineer</option>
+                <option value="Business Analyst">Business Analyst</option>
+                <option value="Quality Assurance Engineer">Quality Assurance Engineer</option>
+                <option value="System Administrator">System Administrator</option>
+                <option value="Database Administrator">Database Administrator</option>
+                <option value="Technical Support Specialist">Technical Support Specialist</option>
+                <option value="Sales Manager">Sales Manager</option>
+                <option value="Graphic Designer">Graphic Designer</option>
+                <option value="Legal Counsel">Legal Counsel</option>
+            </select><br><br>
+
+            <input type="submit" value="Evaluate">
+        </form>
+
+        <div id="evaluationResults"></div>
+    </div>
+
+    <script>
+        // JavaScript code to handle form submission and display evaluation results
+        document.getElementById('evaluationForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Get form data
+            let formData = new FormData(this);
+
+            // Send form data to server using fetch API
+            fetch('/evaluate', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update evaluation results on the page
+                let resultsDiv = document.getElementById('evaluationResults');
+                resultsDiv.innerHTML = ''; // Clear previous results
+                
+                for (let jobTitle in data) {
+                    let resultMessage = data[jobTitle] >= 70 ? "The resume is a good fit for the job description." : "The resume may not fully match the job description.";
+                    resultsDiv.innerHTML += `<h2>For ${jobTitle}:</h2>`;
+                    resultsDiv.innerHTML += `<p>${resultMessage}</p>`;
+                    resultsDiv.innerHTML += `<p>Score: ${data[jobTitle]}%</p>`;
+                    resultsDiv.innerHTML += `<hr>`;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
+
